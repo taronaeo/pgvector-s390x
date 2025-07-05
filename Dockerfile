@@ -7,11 +7,10 @@ ARG CLANG_MAJOR
 
 COPY . /tmp/pgvector
 
-RUN apt-get update \
-    && apt-mark hold locales
-
-RUN # fixes some dependency conflicts               \
-    apt install -y --allow-downgrades               \
+RUN apt-get update                                  \
+    && apt-mark hold locales                        \
+    # fixes some dependency conflicts               \
+    && apt install -y --allow-downgrades            \
         libpq5=15.13-0+deb12u1                      \
         libpq-dev=15.13-0+deb12u1                   \
     # necessary for pgvector build                  \
@@ -24,15 +23,13 @@ RUN # fixes some dependency conflicts               \
     && make OPTFLAGS=""                             \
     && make install                                 \
     && mkdir /usr/share/doc/pgvector                \
-    && cp LICENSE README.md /usr/share/doc/pgvector
-
-RUN rm -r /tmp/pgvector
-
-RUN apt-get remove -y                   \
-        clang-19                        \
-        build-essential                 \
-        postgresql-server-dev-$PG_MAJOR \
-    && apt-get autoremove -y            \
-    && apt-mark unhold locales          \
+    && cp LICENSE README.md /usr/share/doc/pgvector \
+    && rm -r /tmp/pgvector                          \
+    && apt-get remove -y                            \
+        clang-19                                    \
+        build-essential                             \
+        postgresql-server-dev-$PG_MAJOR             \
+    && apt-get autoremove -y                        \
+    && apt-mark unhold locales                      \
     && rm -rf /var/lib/apt/lists/*
 
